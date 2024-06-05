@@ -48,7 +48,6 @@ var WinMan = {
   }),
   create: (winName, callback) => __async(void 0, null, function* () {
     var _a;
-    console.log("create", winName);
     try {
       const win = Helpers.getWindowByName(winName);
       const window = new BrowserWindow(win.config.electronOptions);
@@ -83,6 +82,10 @@ var WinMan = {
       global.log.error(`Failed to close window : ${try_err}`);
     }
   }),
+  /**
+   *
+   * @returns { name: string, path: string }  - The focused window || default window
+  */
   get: () => {
     var _a;
     for (let i = 0; i < data.windows.length; i++)
@@ -90,6 +93,10 @@ var WinMan = {
         return { name: data.windows[i].name, path: data.windows[i].path };
     return WinMan.getDefault();
   },
+  /**
+   *
+   * @returns { name: string, path: string }  - The default window
+  */
   getDefault: () => {
     let win = Helpers.getWindowByName(data.defaultWindow);
     return { name: win.name, path: win.path };
@@ -211,7 +218,6 @@ var electron = (..._0) => __async(void 0, [..._0], function* (options = {}) {
           }
         }
         global.win = data2.events.ipc.window;
-        console.log("window api", global.win);
       }
       global.__dirname = ((_b = options.meta) == null ? void 0 : _b.mainDirectory) || process.cwd();
     }

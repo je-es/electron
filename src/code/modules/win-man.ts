@@ -66,7 +66,6 @@
 
         create  : async (winName : string, callback ?: (winName : string) => void) =>
         {
-            console.log('create', winName);
             try
             {
                 // [0] Get window

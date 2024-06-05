@@ -1,6 +1,6 @@
 {
 	"name": "@je-es/electron",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "A robust and standardized solution for creating a Desktop applications.",
 	"keywords": [
 		"je-es",
@@ -31,7 +31,9 @@
 		"name": "Maysara Elshewehy",
 		"email": "maysara.elshewehy@gmail.com"
 	},
-	"publishConfig": {},
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org/"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/je-es/electron.git"
