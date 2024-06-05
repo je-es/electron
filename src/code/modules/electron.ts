@@ -30,15 +30,21 @@
 
     const static_ipcEvents : i_ipcEvents =
     {
-        'window' :
+        'window'        :
         {
-            'get' : (args : any) => WinMan.get(),
-
-            'create'  : (winName : string) => WinMan.create(winName),
-            'close'   : (winName : string) => WinMan.close(winName),
+            'get'           : (args : any) => WinMan.get(),
+            'create'        : (winName : string) => WinMan.create(winName),
+            'close'         : (winName : string) => WinMan.close(winName),
         },
 
-        'temp' :
+        'component'     :
+        {
+            '__load'        : (cmpName : string) => WinMan.create(cmpName),
+            // 'build'         : (cmpName : string) => CmpMan.build(cmpName),
+            // 'valueOf'       : (cmpName : string) => CmpMan.valueOf(cmpName),
+        },
+
+        'temp'          :
         {
             'prolog-options' : () : string =>
             {
@@ -46,6 +52,8 @@
                 if(data.meta?.mainDirectory) return data.meta?.mainDirectory;
                 return process.cwd();
             },
+
+            'mainDirectory' : () => global.mainDirectory,
         }
     };
 
@@ -103,7 +111,7 @@
                 }
 
                 // - set global __dirname
-                global.__dirname = options.meta?.mainDirectory || process.cwd();
+                global.mainDirectory = options.meta?.mainDirectory || process.cwd();
             }
 
             // [2] Bind events

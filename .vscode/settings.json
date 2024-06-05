@@ -6,20 +6,18 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "tsup.config.ts": true,
         "package-lock.json": true,
         "LICENSE": true,
         "jest.config.js": true,
         ".gitattributes": true,
-        "tsconfig.json": true
+        "tsup.config.ts": true
     },
     "hide-files.files": [
-        "tsup.config.ts",
         "package-lock.json",
         "LICENSE",
         "jest.config.js",
         ".gitattributes",
-        "tsconfig.json"
+        "tsup.config.ts"
     ],
     "colorful-comments.tags":
     [

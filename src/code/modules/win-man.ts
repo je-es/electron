@@ -64,7 +64,7 @@
             }
         },
 
-        create  : async (winName : string, callback ?: (winName : string) => void) =>
+        create  : async (winName : string, callback ?:  (winName : string) => void) =>
         {
             try
             {
@@ -93,8 +93,13 @@
 
                     win._window.on('ready-to-show', () =>
                     {
+                        // - Callback
+                        if(callback) callback(winName);
+
+                        // - Show
                         win._window?.show();
 
+                        // - onReady
                         if(win.events?.onReady) win.events.onReady();
                     });
                 }
@@ -134,7 +139,7 @@
         {
             for(let i = 0; i < data.windows.length; i++)
                 if(data.windows[i]._window?.isFocused())
-                    return { name: data.windows[i].name, path: data.windows[i].path };
+                    return { name: data.windows[i].name, path: data.windows[i].path, components: data.windows[i].config.components };
 
             // return to default
             return WinMan.getDefault();
@@ -148,7 +153,7 @@
         {
             let win = Helpers.getWindowByName(data.defaultWindow);
 
-            return { name: win.name, path: win.path };
+            return { name: win.name, path: win.path, components: win.config.components };
         }
     }
 
@@ -168,7 +173,7 @@
             let res : i_window[] = [];
 
             // - get windows root path
-            const windowsRoot = path.join(global.__dirname, '/interface/windows/');
+            const windowsRoot = path.join(global.mainDirectory, '/interface/windows/');
 
             // - read windows directory
             let windows = fs.readdirSync(windowsRoot);
@@ -262,12 +267,6 @@
             }
 
             return windows;
-        },
-
-        readConfig                          : () =>
-        {
-            // [1] Fetch windows
-
         },
 
         getWindowByName                    : (name : string) =>

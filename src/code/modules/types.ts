@@ -5,7 +5,7 @@
 
 
 
-/* ┌─────────────────────────────────────── TYPE ───────────────────────────────────────┐  */
+/* ┌─────────────────────────────────────── BASE ───────────────────────────────────────┐  */
 
     export interface                        i_appEvents
     {
@@ -38,6 +38,12 @@
         events              ?: i_events;
     }
 
+/* └────────────────────────────────────────────────────────────────────────────────────┘  */
+
+
+
+/* ┌─────────────────────────────────────── WinM ───────────────────────────────────────┐  */
+
     export interface                        i_winman
     {
         defaultWindow       : string;
@@ -67,6 +73,7 @@
     {
         name                : string;
         options             : i_win_opt;
+        components          : string[];
         electronOptions     ?: any;
     }
 
@@ -77,6 +84,41 @@
         config              : i_win_cnf;
         events              : i_appEvents;
         _window             ?: Electron.BrowserWindow;
+    }
+
+/* └────────────────────────────────────────────────────────────────────────────────────┘  */
+
+
+
+/* ┌─────────────────────────────────────── CmpM ───────────────────────────────────────┐  */
+
+    export interface                        i_cmpEvents
+    {
+        onAwake             : () => void;
+        onStart             : () => void;
+        onFinish            : () => void;
+    }
+
+    export interface                        i_cmp_opt
+    {
+        loc ?:
+        {
+            inside ?: string;
+        }
+    }
+
+    export interface                        i_cmp_cnf
+    {
+        name                : string;
+        options             : i_cmp_opt;
+    }
+
+    export interface                        i_component
+    {
+        name                : string;
+        path                : string;
+        config              : i_cmp_cnf;
+        build               : i_cmpEvents;
     }
 
 /* └────────────────────────────────────────────────────────────────────────────────────┘  */

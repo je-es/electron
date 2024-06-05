@@ -90,6 +90,8 @@ var WinMan = {
           win._window.on("closed", win.events.onClose);
         win._window.on("ready-to-show", () => {
           var _a2, _b;
+          if (callback)
+            callback(winName);
           (_a2 = win._window) == null ? void 0 : _a2.show();
           if ((_b = win.events) == null ? void 0 : _b.onReady)
             win.events.onReady();
@@ -118,7 +120,7 @@ var WinMan = {
     var _a;
     for (let i = 0; i < data.windows.length; i++)
       if ((_a = data.windows[i]._window) == null ? void 0 : _a.isFocused())
-        return { name: data.windows[i].name, path: data.windows[i].path };
+        return { name: data.windows[i].name, path: data.windows[i].path, components: data.windows[i].config.components };
     return WinMan.getDefault();
   },
   /**
@@ -127,14 +129,14 @@ var WinMan = {
   */
   getDefault: () => {
     let win = Helpers.getWindowByName(data.defaultWindow);
-    return { name: win.name, path: win.path };
+    return { name: win.name, path: win.path, components: win.config.components };
   }
 };
 var defined = (obj) => typeof obj !== "undefined";
 var Helpers = {
   fetchWindows: () => {
     let res = [];
-    const windowsRoot = import_path.default.join(global.__dirname, "/interface/windows/");
+    const windowsRoot = import_path.default.join(global.mainDirectory, "/interface/windows/");
     let windows = import_fs.default.readdirSync(windowsRoot);
     for (let i = 0; i < windows.length; i++) {
       const windowRoot = import_path.default.join(windowsRoot, windows[i]);
@@ -189,8 +191,6 @@ var Helpers = {
     }
     return windows;
   },
-  readConfig: () => {
-  },
   getWindowByName: (name) => {
     const win = data.windows.find((window) => window.name === name);
     if (!win)
@@ -209,6 +209,11 @@ var static_ipcEvents = {
     "create": (winName) => WinMan.create(winName),
     "close": (winName) => WinMan.close(winName)
   },
+  "component": {
+    "__load": (cmpName) => WinMan.create(cmpName)
+    // 'build'         : (cmpName : string) => CmpMan.build(cmpName),
+    // 'valueOf'       : (cmpName : string) => CmpMan.valueOf(cmpName),
+  },
   "temp": {
     "prolog-options": () => {
       var _a, _b, _c, _d;
@@ -217,7 +222,8 @@ var static_ipcEvents = {
       if ((_c = data2.meta) == null ? void 0 : _c.mainDirectory)
         return (_d = data2.meta) == null ? void 0 : _d.mainDirectory;
       return process.cwd();
-    }
+    },
+    "mainDirectory": () => global.mainDirectory
   }
 };
 var electron = (..._0) => __async(void 0, [..._0], function* (options = {}) {
@@ -247,7 +253,7 @@ var electron = (..._0) => __async(void 0, [..._0], function* (options = {}) {
         }
         global.win = data2.events.ipc.window;
       }
-      global.__dirname = ((_b = options.meta) == null ? void 0 : _b.mainDirectory) || process.cwd();
+      global.mainDirectory = ((_b = options.meta) == null ? void 0 : _b.mainDirectory) || process.cwd();
     }
     {
       import_electron2.app.on("window-all-closed", Helpers2.onWindowAllClosed);

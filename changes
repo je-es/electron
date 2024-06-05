@@ -16,11 +16,15 @@
 
     - add `global.win` to the main process.
 
+- ## 0.0.3
+
+    - cleanup ..
+
+    - implement the components system.
+
 ---
 
 - #### To .. Do ?
-
-    - components system - in progress
 
     - fix logsDirectory, see it :
     ```js
