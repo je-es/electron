@@ -1,0 +1,99 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "tsup.config.ts": true,
+        "package-lock.json": true,
+        "LICENSE": true,
+        "jest.config.js": true,
+        ".gitattributes": true,
+        ".gitignore": true,
+        ".npmignore": true,
+        "tsconfig.json": true
+    },
+    "hide-files.files": [
+        "tsup.config.ts",
+        "package-lock.json",
+        "LICENSE",
+        "jest.config.js",
+        ".gitattributes",
+        ".gitignore",
+        ".npmignore",
+        "tsconfig.json"
+    ],
+    "colorful-comments.tags":
+    [
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "?",
+            "color": "#0076FF",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "//",
+            "color": "#474747",
+            "strikethrough": true,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "^",
+            "color": "#EAF622",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "*",
+            "color": "#28FF00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "&",
+            "color": "#FF06A0",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "~",
+            "color": "#BE00FF",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": " [",
+            "color": "#E16285",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "-",
+            "color": "#988A93",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "/* ┌",
+            "color": "#58E876",
+        },
+        {
+            "tag": "/* └",
+            "color": "#58E876",
+        },
+    ]
+}

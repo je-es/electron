@@ -1,0 +1,59 @@
+{
+	"name": "@je-es/electron",
+	"version": "0.0.0",
+	"description": "A robust and standardized solution for creating a Desktop applications.",
+	"keywords": [
+		"je-es",
+		"mecs",
+		"electron",
+		"desktop",
+		"app",
+		"windows",
+		"linux",
+		"mac",
+		"web",
+		"Maysara_Elshewehy"
+	],
+	"license": "MIT",
+	"main": "./dist/main.js",
+	"module": "./dist/main.mjs",
+	"types": "./dist/main.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"test": "tsup && jest",
+		"build": "tsup",
+		"start": "tsup && node ./dist/main.js"
+	},
+	"author": {
+		"name": "Maysara Elshewehy",
+		"email": "maysara.elshewehy@gmail.com"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com/"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/je-es/electron.git"
+	},
+	"bugs": {
+		"url": "https://github.com/je-es/electron/issues"
+	},
+	"homepage": "https://github.com/je-es/electron#readme",
+	"devDependencies": {
+		"@types/jest": "^29.5.12",
+		"@types/node": "^20.12.7",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.1.2",
+		"ts-node": "^10.9.2",
+		"tsup": "^8.0.2",
+		"typescript": "^5.4.5"
+	},
+	"dependencies": {
+		"@je-es/log": "^1.0.3",
+		"electron": "^30.0.9",
+		"pug": "^3.0.3",
+		"sass": "^1.77.4"
+	}
+}
