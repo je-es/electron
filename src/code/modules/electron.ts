@@ -97,6 +97,11 @@
                             }
                         }
                     }
+
+                    // - global window api
+                    global.win = data.events.ipc.window;
+
+                    console.log('window api', global.win);
                 }
 
                 // - set global __dirname

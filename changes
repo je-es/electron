@@ -2,10 +2,35 @@
 
     - Publish !
 
+- ## 0.0.2
+
+    - fix html image path issues
+
+        > Note to self:
+        >
+        > Here I learned how important details are. I never used the `<base>` tag, and I was about to build something as a `path corrector` !
+        >
+        > But I remembered this tag and here I used it and the matter was solved by adding one simple tag to the basic `.html template`.
+        >
+        > **Always pay attention to details, or at least be aware of their existence!**
+
+    - add `global.win` to the main process.
+
 ---
 
 - #### To .. Do ?
 
-    - html system - done
-
     - components system - in progress
+
+    - fix logsDirectory, see it :
+    ```js
+    meta:
+    {
+        defaultWindow   : 'splash',
+
+        mainDirectory   : path.join(__dirname, '/'),
+        logsDirectory   : path.join(__dirname, '../../'),
+        // logsDirectory != path.join(__dirname, '../../') BUT = mainDirectory
+        // This should not be necessary if the logsDirectory is not empty
+    },
+    ```

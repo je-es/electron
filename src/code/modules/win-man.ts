@@ -17,7 +17,7 @@
 
 /* ┌─────────────────────────────────────── TYPE ───────────────────────────────────────┐  */
 
-    import { i_winman, i_window, t_windows, i_win_cnf, i_appEvents as i_win_evt }
+    import { i_winman, i_window, i_win_cnf, i_appEvents as i_win_evt }
     from './types';
 
 /* └────────────────────────────────────────────────────────────────────────────────────┘  */
@@ -66,6 +66,7 @@
 
         create  : async (winName : string, callback ?: (winName : string) => void) =>
         {
+            console.log('create', winName);
             try
             {
                 // [0] Get window
@@ -102,7 +103,7 @@
 
             catch(try_err)
             {
-                global.log.error(`Failed to setup windows : ${try_err}`);
+                global.log.error(`Failed to create window : ${try_err}`);
 
                 throw try_err;
             }
@@ -110,16 +111,45 @@
 
         close   : async (winName : string, callback ?: (winName : string) => void) =>
         {
+            try
+            {
+                // [0] Get window
+                const win = Helpers.getWindowByName(winName);
 
+                // [1] Close window
+                win._window?.close();
+                win._window = undefined;
+            }
+
+            catch(try_err)
+            {
+                global.log.error(`Failed to close window : ${try_err}`);
+            }
         },
 
+        /**
+         *
+         * @returns { name: string, path: string }  - The focused window || default window
+        */
         get     : () : any =>
         {
             for(let i = 0; i < data.windows.length; i++)
                 if(data.windows[i]._window?.isFocused())
                     return { name: data.windows[i].name, path: data.windows[i].path };
 
-            return { name: data.windows[0].name, path: data.windows[0].path };
+            // return to default
+            return WinMan.getDefault();
+        },
+
+        /**
+         *
+         * @returns { name: string, path: string }  - The default window
+        */
+        getDefault : () : any =>
+        {
+            let win = Helpers.getWindowByName(data.defaultWindow);
+
+            return { name: win.name, path: win.path };
         }
     }
 
@@ -133,10 +163,10 @@
 
     const Helpers =
     {
-        fetchWindows                        : () : t_windows =>
+        fetchWindows                        : () : i_window[] =>
         {
             // - to store fetched windows
-            let res : t_windows = [];
+            let res : i_window[] = [];
 
             // - get windows root path
             const windowsRoot = path.join(global.__dirname, '/interface/windows/');
@@ -169,7 +199,7 @@
             return res;
         },
 
-        initWindows                         : (windows : t_windows) =>
+        initWindows                         : (windows : i_window[]) =>
         {
             // - loop through windows
             for(let i = 0; i < windows.length; i++)

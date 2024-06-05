@@ -48,6 +48,7 @@ var WinMan = {
   }),
   create: (winName, callback) => __async(void 0, null, function* () {
     var _a;
+    console.log("create", winName);
     try {
       const win = Helpers.getWindowByName(winName);
       const window = new BrowserWindow(win.config.electronOptions);
@@ -68,18 +69,30 @@ var WinMan = {
         });
       }
     } catch (try_err) {
-      global.log.error(`Failed to setup windows : ${try_err}`);
+      global.log.error(`Failed to create window : ${try_err}`);
       throw try_err;
     }
   }),
   close: (winName, callback) => __async(void 0, null, function* () {
+    var _a;
+    try {
+      const win = Helpers.getWindowByName(winName);
+      (_a = win._window) == null ? void 0 : _a.close();
+      win._window = void 0;
+    } catch (try_err) {
+      global.log.error(`Failed to close window : ${try_err}`);
+    }
   }),
   get: () => {
     var _a;
     for (let i = 0; i < data.windows.length; i++)
       if ((_a = data.windows[i]._window) == null ? void 0 : _a.isFocused())
         return { name: data.windows[i].name, path: data.windows[i].path };
-    return { name: data.windows[0].name, path: data.windows[0].path };
+    return WinMan.getDefault();
+  },
+  getDefault: () => {
+    let win = Helpers.getWindowByName(data.defaultWindow);
+    return { name: win.name, path: win.path };
   }
 };
 var defined = (obj) => typeof obj !== "undefined";
@@ -197,6 +210,8 @@ var electron = (..._0) => __async(void 0, [..._0], function* (options = {}) {
             }
           }
         }
+        global.win = data2.events.ipc.window;
+        console.log("window api", global.win);
       }
       global.__dirname = ((_b = options.meta) == null ? void 0 : _b.mainDirectory) || process.cwd();
     }

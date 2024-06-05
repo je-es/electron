@@ -1,10 +1,11 @@
 # [@je-es/electron](../../../README.md) API
 
-| API               Desc     |                                                                                                 |
+| API                        | Desc                                                                                            |
 | -------------------------- | ----------------------------------------------------------------------------------------------- |
 | [Tree](#tree)              | The project structure for building Electron applications.                                       |
 | [Electron](#electron)      | Instructions for initializing the Electron application with the provided configuration options. |
 | [IPC](#ipc)                | Handling Inter-Process Communication (IPC) events in Electron.                                  |
+| [WIN](#win)                | Handling windows events in Electron.                                                            |
 | [Examples](#file-examples) | Sample file configurations and examples used in the project.                                    |
 
 
@@ -97,15 +98,25 @@
 
       electron(
       {
-            app :
+            meta:
             {
-                onReady : () => (global as any).log.debug('App is ready !'),  // global.log is legal here
-                onClose : () => (global as any).log.debug('App is closed !'), // ..
+                defaultWindow   : 'splash',
+                mainDirectory   : path.join(__dirname, '/'),
+                logsDirectory   : path.join(__dirname, '../../'),
             },
 
-            ipc :
+            events:
             {
-                // see IPC section
+                app :
+                {
+                    onReady : () => (global as any).log.debug('App is ready !'),  // global.log is legal here
+                    onClose : () => (global as any).log.debug('App is closed !'), // ..
+                },
+
+                ipc :
+                {
+                    // see IPC section
+                }
             }
       })
       ```
@@ -192,14 +203,46 @@
     - `windows/window/events.js`
 
         ```js
-        const win = await global.ipc('window', 'get');
+        let win;
 
         module.exports =
         {
-            onStart: async () => global.log.debug(`${win.name} window loaded in Browser`),
-            onClose: async () => global.log.debug(`${win.name} window loaded in Browser`),
+            onReady: async () =>
+            {
+                win = await global.win.get();
+
+                global.log.debug(`${win.name} window loaded in Browser`);
+
+                setTimeout(async () =>
+                {
+                    await global.win.create('main');
+                    await global.win.close(win.name);
+                }, 1000);
+            },
+
+            onClose: async () => global.log.debug(`${win.name} window closed in Browser`),
         };
         ```
+
+        - #### WIN
+
+            > in `events.js` file you can use the following functions
+
+            ```js
+            // Create a window
+            global.win.create(winName);
+            ```
+
+            ```js
+            // Close the window
+            global.win.close(winName);
+            ```
+
+            ```js
+            // Get focused window || default window
+            global.win.get();
+            ```
+
 
     - `windows/window/preload.js`
 
@@ -238,23 +281,23 @@
         - `assets/css/style.scss`
 
             ```scss
-            @import './root.scss';
+            @use './root' as root;
 
             body
             {
-                font              : 100% $font-stack;
-                background-color  : $bg-color;
+                font              : 100% root.$font-stack;
+                background-color  : root.$bg-color;
             }
             ```
 
-        - `windows/window/style.scss`
+        - `windows/*/style.scss`
 
             ```scss
-            @import '../../assets/css/root.scss';
+            @use '../../assets/css/root' as root;
 
             h1
             {
-                color             : $fg-color;
+            color             : root.$fg-color;
             }
             ```
 

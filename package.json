@@ -1,6 +1,6 @@
 {
 	"name": "@je-es/electron",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A robust and standardized solution for creating a Desktop applications.",
 	"keywords": [
 		"je-es",
@@ -19,7 +19,8 @@
 	"module": "./dist/main.mjs",
 	"types": "./dist/main.d.ts",
 	"files": [
-		"dist", "src"
+		"dist",
+		"src"
 	],
 	"scripts": {
 		"test": "tsup && jest",
@@ -30,8 +31,7 @@
 		"name": "Maysara Elshewehy",
 		"email": "maysara.elshewehy@gmail.com"
 	},
-	"publishConfig": {
-	},
+	"publishConfig": {},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/je-es/electron.git"
@@ -43,6 +43,7 @@
 	"devDependencies": {
 		"@types/jest": "^29.5.12",
 		"@types/node": "^20.12.7",
+		"@types/electron": "^1.6.10",
 		"jest": "^29.7.0",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",
@@ -50,8 +51,8 @@
 		"typescript": "^5.4.5"
 	},
 	"dependencies": {
+		"electron": "30.0.9",
 		"@je-es/log": "^1.0.3",
-		"electron": "^30.0.9",
 		"pug": "^3.0.3",
 		"sass": "^1.77.4"
 	}

@@ -41,7 +41,7 @@
     export interface                        i_winman
     {
         defaultWindow       : string;
-        windows             : t_windows;
+        windows             : i_window[];
     }
 
     export interface                        i_win_opt
@@ -78,8 +78,5 @@
         events              : i_appEvents;
         _window             ?: Electron.BrowserWindow;
     }
-
-    export type                             t_windows =
-    i_window[]
 
 /* └────────────────────────────────────────────────────────────────────────────────────┘  */

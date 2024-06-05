@@ -34,7 +34,11 @@
 
                 // - ipc
                 {
-                    global.ipc = async (group, event, args) => await ipcRenderer.invoke('events', { group, event, args });
+                    global.ipc = async (group, event, args) =>
+                    {
+                        console.log('ipc', group, event, args);
+                        return await ipcRenderer.invoke('events', { group, event, args });
+                    };
                     contextBridge.exposeInMainWorld('call', global.ipc);
                 }
             }
@@ -262,10 +266,10 @@
             if(!fs.existsSync(targetPath)) return;
 
             // read the layout.pug file
-            const compiledFunction = pug.compileFile(path.join(targetPath, 'layout.pug'));
+            const compiledFunction = pug.compileFile(path.join(targetPath, 'layout.pug'), { basedir: targetPath });
 
             // Render a set of data
-            const htmlCode = compiledFunction({
+            let htmlCode = compiledFunction({
                 name: 'Maysara'
             });
 
