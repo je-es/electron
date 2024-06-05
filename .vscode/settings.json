@@ -11,8 +11,6 @@
         "LICENSE": true,
         "jest.config.js": true,
         ".gitattributes": true,
-        ".gitignore": true,
-        ".npmignore": true,
         "tsconfig.json": true
     },
     "hide-files.files": [
@@ -21,8 +19,6 @@
         "LICENSE",
         "jest.config.js",
         ".gitattributes",
-        ".gitignore",
-        ".npmignore",
         "tsconfig.json"
     ],
     "colorful-comments.tags":

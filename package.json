@@ -1,6 +1,6 @@
 {
 	"name": "@je-es/electron",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "A robust and standardized solution for creating a Desktop applications.",
 	"keywords": [
 		"je-es",
@@ -19,7 +19,7 @@
 	"module": "./dist/main.mjs",
 	"types": "./dist/main.d.ts",
 	"files": [
-		"dist"
+		"dist", "src"
 	],
 	"scripts": {
 		"test": "tsup && jest",
@@ -31,7 +31,6 @@
 		"email": "maysara.elshewehy@gmail.com"
 	},
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com/"
 	},
 	"repository": {
 		"type": "git",
