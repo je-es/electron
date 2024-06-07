@@ -11,7 +11,7 @@
     const { logger }                        = require('@je-es/log');
     const path                              = require('path');
     const { addLayout, addStyle }           = require('./layout');
-    const cmpMan = require('./cmp-man');
+    const cmpMan                            = require('./cmp-man');
 
 /* └────────────────────────────────────────────────────────────────────────────────────┘  */
 
@@ -51,10 +51,10 @@
                 win = await global.ipc('window', 'get');
 
                 // load the default window style
-                addStyle(path.join(win.path, '../../assets/css/style'));
+                await addStyle(path.join(win.path, '../../assets/css/style'));
 
                 // load the window layout
-                addLayout(win.path);
+                await addLayout(win.path, { loc: { 'as' : 'window' }, data: { winName: win.name } });
 
                 // load the window script
                 const windowScript = require(win.path + '/preload.js');
@@ -64,16 +64,16 @@
             // [2] Load components
             if(win.components)
             {
-                const components = await cmpMan.setup(win.components, win.name)
+                await cmpMan.setup(win.components, win.name)
             }
 
             global.log.debug('Preload loaded !');
         }
 
-        catch(error)
+        catch(err)
         {
-            console.error(`Failed to create window : ${error}`);
-            throw error;
+            console.error(`Failed to create window : ${err}`);
+            throw err;
         }
     };
 

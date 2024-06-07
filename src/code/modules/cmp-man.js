@@ -21,6 +21,16 @@
     {
         setup  : async (componentsList, win) =>
         {
+            /* ┌───────────────────────── TYPE ─────────────────────────┐  */
+
+                    if(!Array.isArray(componentsList))
+                        throw new Error('Components Setup(!componentsList) : Components list must be an array');
+
+                    if(!win)
+                        throw new Error('Components Setup(!win) : Window must be defined');
+
+            /* └────────────────────────────────────────────────────────┘  */
+
             try
             {
                 let components = [];
@@ -41,7 +51,7 @@
                 for(let i = 0; i < components.length; i++)
                 {
                     addStyle(components[i].path, cmp.name + 'Style' , 'component');
-                    const DOM = addLayout(components[i].path, components[i].config.options.loc);
+                    const DOM = await addLayout(components[i].path, { loc: components[i].config.options.loc, data: { } });
                 }
 
                 // [3] onFinish for each component

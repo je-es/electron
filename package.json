@@ -1,6 +1,6 @@
 {
 	"name": "@je-es/electron",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A robust and standardized solution for creating a Desktop applications.",
 	"keywords": [
 		"je-es",
@@ -43,9 +43,10 @@
 	},
 	"homepage": "https://github.com/je-es/electron#readme",
 	"devDependencies": {
+		"@types/electron": "^1.6.10",
 		"@types/jest": "^29.5.12",
 		"@types/node": "^20.12.7",
-		"@types/electron": "^1.6.10",
+		"@types/pug": "^2.0.10",
 		"jest": "^29.7.0",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",
@@ -53,8 +54,8 @@
 		"typescript": "^5.4.5"
 	},
 	"dependencies": {
-		"electron": "30.0.9",
 		"@je-es/log": "^1.0.3",
+		"electron": "30.0.9",
 		"pug": "^3.0.3",
 		"sass": "^1.77.4"
 	}

@@ -16,25 +16,14 @@
 
     - add `global.win` to the main process.
 
-- ## 0.0.3
+- ## 0.0.3,4,5
 
     - cleanup ..
 
     - implement the components system.
 
+    - more fixes.
+
 ---
 
 - #### To .. Do ?
-
-    - fix logsDirectory, see it :
-    ```js
-    meta:
-    {
-        defaultWindow   : 'splash',
-
-        mainDirectory   : path.join(__dirname, '/'),
-        logsDirectory   : path.join(__dirname, '../../'),
-        // logsDirectory != path.join(__dirname, '../../') BUT = mainDirectory
-        // This should not be necessary if the logsDirectory is not empty
-    },
-    ```

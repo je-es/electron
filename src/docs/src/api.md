@@ -1,11 +1,12 @@
 # [@je-es/electron](../../../README.md) API
 
+> **You must read and understand every letter of this document before you start creating your own projects**
+
 | API                        | Desc                                                                                            |
 | -------------------------- | ----------------------------------------------------------------------------------------------- |
 | [Tree](#tree)              | The project structure for building Electron applications.                                       |
 | [Electron](#electron)      | Instructions for initializing the Electron application with the provided configuration options. |
 | [IPC](#ipc)                | Handling Inter-Process Communication (IPC) events in Electron.                                  |
-| [WIN](#win)                | Handling windows events in Electron.                                                            |
 | [Examples](#file-examples) | Sample file configurations and examples used in the project.                                    |
 
 
@@ -28,15 +29,16 @@
     │  │  │     └─ style.scss
     │  │  ├─ components
     │  │  │  └─ component
+    │  │        ├─ config.json
+    │  │  │     ├─ build.js
     │  │  │     ├─ layout.pug
-    │  │  │     ├─ preload.js
     │  │  │     └─ style.scss
     │  │  └─ windows
     │  │     └─ window
     │  │        ├─ config.json
     │  │        ├─ events.js
-    │  │        ├─ layout.pug
     │  │        ├─ preload.js
+    │  │        ├─ layout.pug
     │  │        └─ style.scss
     │  └─ main.js
     ├─ tests
@@ -51,39 +53,6 @@
     - **Prototype**
 
         ```ts
-        interface i_appEvents
-        {
-            onReady             ?: () => void;
-            onClose             ?: () => void;
-        }
-
-        interface i_ipcEvents
-        {
-            [key : string] : { [key : string] : (...args : any[]) => any }
-        }
-
-        interface i_events
-        {
-            app                 ?: i_appEvents;
-            ipc                 ?: i_ipcEvents;
-        }
-
-        interface i_meta
-        {
-            defaultWindow   ?: string,
-
-            mainDirectory   : string,
-            logsDirectory   ?: string | null,
-        }
-
-        interface i_electron
-        {
-            meta            ?: i_meta;
-            events          ?: i_events;
-        }
-        ```
-
-        ```ts
         const electron
         = async (options : i_electron = {})
         : Promise<void>
@@ -91,9 +60,8 @@
 
     - **Example**
 
-      > _in `main.js`_
-
       ```ts
+      // as `main.js`
       import { electron } from '@je-es/electron';
 
       electron(
@@ -120,6 +88,50 @@
             }
       })
       ```
+
+    - **Types**
+
+        ```ts
+        interface i_electron
+        {
+            meta            ?: i_meta;
+            events          ?: i_events;
+        }
+        ```
+
+        ```ts
+        interface i_meta
+        {
+            defaultWindow   ?: string,
+            mainDirectory   : string,
+            logsDirectory   ?: string | null,
+        }
+        ```
+
+        ```ts
+        interface i_events
+        {
+            app                 ?: i_baseEvents;
+            ipc                 ?: i_ipcEvents;
+        }
+        ```
+
+        ```ts
+        interface i_baseEvents
+        {
+            onReady             ?: () => void;
+            onClose             ?: () => void;
+        }
+        ```
+
+        ```ts
+        interface i_ipcEvents
+        {
+            [key : string] : { [key : string] : (...args : any[]) => any }
+        }
+        ```
+
+
 
 ---
 
@@ -178,129 +190,283 @@
 
 - #### File Examples
 
-    - `windows/window/config.json`
+    - `windows/?/*`
 
-        ```json
-        {
-            "name" : "winName",
+      - `windows/?/config.json`
 
-            "options" :
+          - **Example**
+
+            ```json
             {
-                "width"                 : 300,
-                "height"                : 300,
-                "frame"                 : false,
-                "show"                  : false,
+                "name" : "winName",
 
-                "webPreferences" :
+                "options" :
                 {
-                    "preload"           : true,
-                    "nodeIntegration"   : true
+                    "width"                 : 300,
+                    "height"                : 300,
+                    "frame"                 : false,
+                    "show"                  : false,
+
+                    "webPreferences" :
+                    {
+                        "preload"           : true,
+
+                        "contextIsolation"  : true,
+                        "nodeIntegration"   : false,
+                        "sandbox"           : false
+                    }
                 }
             }
-        }
-        ```
+            ```
 
-    - `windows/window/events.js`
+          - **Types**
 
-        ```js
-        let win;
+              ```ts
+              interface i_win_opt
+              {
+                  width               ?: number;
+                  maxWidth            ?: number;
+                  minWidth            ?: number;
 
-        module.exports =
-        {
-            onReady: async () =>
+                  height              ?: number;
+                  maxHeight           ?: number;
+                  minHeight           ?: number;
+
+                  frame               ?: boolean;
+                  show                ?: boolean;
+                  transparent         ?: boolean;
+
+                  menu                ?: boolean; // if true, hide the menu
+
+                  webPreferences      ?: any;     // .preload as boolean not string
+              }
+              ```
+
+              > `webPreferences.preload` is boolean, **not string**_(path like the default in electron)_
+              >
+              > **By enabling it**, the script/layout (and its assets like styles, images,...) and components will be loaded, and you can manage the program in a really easy way
+
+      - `windows/?/events.js`
+
+          - **Example**
+
+              ```js
+              let win;
+
+              module.exports =
+              {
+                  onReady: async () =>
+                  {
+                      win = await global.win.get();
+
+                      global.log.debug(`${win.name} window loaded in Browser`);
+
+                      setTimeout(async () =>
+                      {
+                          await global.win.create('main');
+                          await global.win.close(win.name);
+                      }, 1000);
+                  },
+
+                  onClose: async () => global.log.debug(`${win.name} window closed in Browser`),
+              };
+              ```
+
+          - **Types**
+
+              ```ts
+              interface i_baseEvents
+              {
+                  onReady             ?: () => void;
+                  onClose             ?: () => void;
+              }
+              ```
+
+          - **`global.win`**
+
+              > in `events.js` file you can use the following functions
+
+              ```js
+              // Create a window
+              global.win.create(winName);
+              ```
+
+              ```js
+              // Close the window
+              global.win.close(winName);
+              ```
+
+              ```js
+              // Get focused window || default window
+              global.win.get();
+              ```
+
+
+      - `windows/?/preload.js`
+
+          - **Example**
+
+              ```js
+              module.exports =
+              {
+                  onLoad : async () =>
+                  {
+                      const win = await global.ipc('window', 'get')
+
+                      global.log.debug(`${win.name} window loaded in Browser`);
+                  }
+              };
+              ```
+
+          - **Types**
+
+            > **This is Javascript**, so just **Follow the following syntax :**
+
+            ```ts
             {
-                win = await global.win.get();
+                // The main function [REQUIRED]
+                onLoad               : () => void;
+            }
+            ```
 
-                global.log.debug(`${win.name} window loaded in Browser`);
+      - `windows/?/layout.pug`
 
-                setTimeout(async () =>
+          - **Example**
+
+              > **Pre-made HTML content**: The HTML code written here will be inside the `body` tag.
+
+              ```pug
+              h1="In " + winName + " Window"
+              ```
+
+              > `winName` : Provides a current window name.
+
+      - `?.scss`
+
+          - **Examples**
+
+              > Style files associated with each element will be automatically detected without the need for a link:style tag.
+
+              - `assets/css/root.scss`
+
+                  ```scss
+                  $font-stack         : Helvetica, sans-serif;
+                  $fg-color           : #ffe922;
+                  $bg-color           : #333;
+                  ```
+
+              - `assets/css/style.scss`
+
+                  ```scss
+                  @use './root' as root;
+
+                  body
+                  {
+                      font              : 100% root.$font-stack;
+                      background-color  : root.$bg-color;
+                  }
+                  ```
+
+              - `windows/*/style.scss`
+
+                  ```scss
+                  @use '../../assets/css/root' as root;
+
+                  h1
+                  {
+                  color             : root.$fg-color;
+                  }
+                  ```
+
+    - `components/?/*`
+
+
+      - `components/?/config.json`
+
+          - **Example**
+
+            ```json
+            {
+                "name" : "componentName",
+
+                "options" :
                 {
-                    await global.win.create('main');
-                    await global.win.close(win.name);
-                }, 1000);
-            },
-
-            onClose: async () => global.log.debug(`${win.name} window closed in Browser`),
-        };
-        ```
-
-        - #### WIN
-
-            > in `events.js` file you can use the following functions
-
-            ```js
-            // Create a window
-            global.win.create(winName);
-            ```
-
-            ```js
-            // Close the window
-            global.win.close(winName);
-            ```
-
-            ```js
-            // Get focused window || default window
-            global.win.get();
-            ```
-
-
-    - `windows/window/preload.js`
-
-        ```js
-        module.exports =
-        {
-            onLoad : async () =>
-            {
-                const win = await global.ipc('window', 'get');
-
-                global.log.debug(`${win.name} window loaded in Browser`);
-            }
-        };
-        ```
-
-    - `windows/window/layout.pug`
-
-        > **Pre-made HTML content**: The HTML code written here will be inside the `body` tag.
-
-        ```pug
-        h1='Hello World !'
-        ```
-
-    - `?.scss`
-
-        > Style files associated with each element will be automatically detected without the need for a link:style tag.
-
-        - `assets/css/root.scss`
-
-            ```scss
-            $font-stack         : Helvetica, sans-serif;
-            $fg-color           : #ffe922;
-            $bg-color           : #333;
-            ```
-
-        - `assets/css/style.scss`
-
-            ```scss
-            @use './root' as root;
-
-            body
-            {
-                font              : 100% root.$font-stack;
-                background-color  : root.$bg-color;
+                    "loc":
+                    {
+                        "inside" : "body"
+                    }
+                }
             }
             ```
 
-        - `windows/*/style.scss`
+          - **Types**
 
-            ```scss
-            @use '../../assets/css/root' as root;
+            > This is **Javascript** so just follow this syntax:
 
-            h1
+            ```ts
+            interface i_cmp_cnf
             {
-            color             : root.$fg-color;
+                name                : string;
+                options             : i_cmp_opt;
             }
             ```
 
----
 
-> **Made with ❤ by [Maysara Elshewehy](https://github.com/Maysara-Elshewehy)**
+            ```ts
+            interface i_cmp_opt
+            {
+                loc ?:
+                {
+                    inside ?: string;
+                    as     ?: string;
+                }
+            }
+            ```
+
+      - `components/?/build.js`
+
+          - **Example**
+
+            ```js
+            module.exports =
+            {
+                onAwake: async () =>
+                {
+                    global.log.debug(`my component loaded`);
+                },
+
+                onStart: async () =>
+                {
+                    global.log.debug(`my component main code !`);
+                },
+
+                onFinish: async () =>
+                {
+                    global.log.debug(`my component finished`);
+                },
+            };
+            ```
+
+          - **Types**
+
+            > **This is Javascript**, so just **Follow the following syntax :**
+
+            ```ts
+            {
+                onAwake             : () => void;   // call when loading this component
+                onStart             : () => void;   // call when loading all the components [by order]
+                onFinish            : () => void;   // call when the onStart finished
+            }
+            ```
+
+      - `components/?/layout.pug`
+
+        > **Same as `windows`**
+
+      - `components/?/?.scss`
+
+        > **Same as `windows`**
+
+  ---
+
+  > **Made with ❤ by [Maysara Elshewehy](https://github.com/Maysara-Elshewehy)**

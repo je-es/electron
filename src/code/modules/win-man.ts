@@ -17,7 +17,7 @@
 
 /* ┌─────────────────────────────────────── TYPE ───────────────────────────────────────┐  */
 
-    import { i_winman, i_window, i_win_cnf, i_appEvents as i_win_evt }
+    import { i_winman, i_window, i_win_cnf, i_baseEvents as i_win_evt }
     from './types';
 
 /* └────────────────────────────────────────────────────────────────────────────────────┘  */
@@ -256,11 +256,18 @@
                     // - preload
                     if(defined(windows[i].config.options.webPreferences.preload) && windows[i].config.options.webPreferences.preload)
                         electronOptions.webPreferences.preload = path.join(__dirname, '../src/code/modules/preload.js');
-                    // electronOptions.webPreferences.preload = path.join(__dirname, './preload.js');
 
                     // - node integration
                     if(defined(windows[i].config.options.webPreferences.nodeIntegration))
                         electronOptions.webPreferences.nodeIntegration = windows[i].config.options.webPreferences.nodeIntegration;
+
+                    // - context isolation
+                    if(defined(windows[i].config.options.webPreferences.contextIsolation))
+                        electronOptions.webPreferences.contextIsolation = windows[i].config.options.webPreferences.contextIsolation;
+
+                    // - sandbox
+                    if(defined(windows[i].config.options.webPreferences.sandbox))
+                        electronOptions.webPreferences.sandbox = windows[i].config.options.webPreferences.sandbox;
                 }
 
                 windows[i].config.electronOptions = electronOptions;

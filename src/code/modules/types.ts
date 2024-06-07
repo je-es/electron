@@ -7,7 +7,7 @@
 
 /* ┌─────────────────────────────────────── BASE ───────────────────────────────────────┐  */
 
-    export interface                        i_appEvents
+    export interface                        i_baseEvents
     {
         onReady             ?: () => void;
         onClose             ?: () => void;
@@ -20,7 +20,7 @@
 
     export interface                        i_events
     {
-        app                 ?: i_appEvents;
+        app                 ?: i_baseEvents;
         ipc                 ?: i_ipcEvents;
     }
 
@@ -82,7 +82,7 @@
         name                : string;
         path                : string;
         config              : i_win_cnf;
-        events              : i_appEvents;
+        events              : i_baseEvents;
         _window             ?: Electron.BrowserWindow;
     }
 
@@ -104,6 +104,7 @@
         loc ?:
         {
             inside ?: string;
+            as     ?: string;
         }
     }
 

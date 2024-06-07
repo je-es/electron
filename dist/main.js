@@ -54,6 +54,10 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 
+// src/code/modules/electron.ts
+var import_pug = __toESM(require("pug"));
+var import_sass = __toESM(require("sass"));
+
 // src/code/modules/win-man.ts
 var import_electron = require("electron");
 var import_fs = __toESM(require("fs"));
@@ -186,6 +190,10 @@ var Helpers = {
           electronOptions.webPreferences.preload = import_path.default.join(__dirname, "../src/code/modules/preload.js");
         if (defined(windows[i].config.options.webPreferences.nodeIntegration))
           electronOptions.webPreferences.nodeIntegration = windows[i].config.options.webPreferences.nodeIntegration;
+        if (defined(windows[i].config.options.webPreferences.contextIsolation))
+          electronOptions.webPreferences.contextIsolation = windows[i].config.options.webPreferences.contextIsolation;
+        if (defined(windows[i].config.options.webPreferences.sandbox))
+          electronOptions.webPreferences.sandbox = windows[i].config.options.webPreferences.sandbox;
       }
       windows[i].config.electronOptions = electronOptions;
     }
@@ -209,10 +217,9 @@ var static_ipcEvents = {
     "create": (winName) => WinMan.create(winName),
     "close": (winName) => WinMan.close(winName)
   },
-  "component": {
-    "__load": (cmpName) => WinMan.create(cmpName)
-    // 'build'         : (cmpName : string) => CmpMan.build(cmpName),
-    // 'valueOf'       : (cmpName : string) => CmpMan.valueOf(cmpName),
+  "libs": {
+    "pug": (args) => import_pug.default.compileFile(args.targetPath, args.options)(args.data),
+    "sass": (args) => import_sass.default.compile(args.targetPath).css
   },
   "temp": {
     "prolog-options": () => {
@@ -265,6 +272,15 @@ var electron = (..._0) => __async(void 0, [..._0], function* (options = {}) {
   }
 });
 var Helpers2 = {
+  /**
+   * Executes the onWindowAllClosed function asynchronously.
+   *
+   * This function is called when all windows are closed. It performs the following steps:
+   * 1. If there is a close callback defined in the data.events.app object, it awaits its execution.
+   * 2. If the current platform is not 'darwin' (i.e., not macOS), it quits the application.
+   *
+   * @return {Promise<void>} A promise that resolves when the function completes.
+  */
   onWindowAllClosed: () => __async(void 0, null, function* () {
     if (data2.events && data2.events.app && data2.events.app.onClose)
       yield data2.events.app.onClose();
@@ -272,17 +288,34 @@ var Helpers2 = {
       import_electron2.app.quit();
     }
   }),
+  /**
+   * Executes the onReady function asynchronously.
+   *
+   * This function sets up IPC event handling and initializes the Electron application.
+   * It checks if the IPC has a group and an event, and calls the event with the provided arguments.
+   * If the IPC is not found or the group or event is not found, an error is thrown.
+   * The function also checks if the 'onReady' callback is defined in the 'data.events.app' object,
+   * and if so, it awaits its execution.
+   * Finally, it creates a default window if no windows are currently open.
+   *
+   * @return {Promise<void>} A promise that resolves when the onReady function is successfully executed.
+  */
   onReady: () => __async(void 0, null, function* () {
     var _a;
     import_electron2.ipcMain.handle("events", (event, options) => __async(void 0, null, function* () {
-      if (!data2.events || !data2.events.ipc)
-        throw new Error(`data.events.ipc not found`);
-      if (!data2.events.ipc[options.group])
-        throw new Error(`data.events.ipc.group not found : ${options.group}`);
-      if (!data2.events.ipc[options.group][options.event])
-        throw new Error(`data.events.ipc.group.event not found : ${options.group}.${options.event}`);
-      const res = yield data2.events.ipc[options.group][options.event](options.args);
-      return res;
+      try {
+        if (!data2.events || !data2.events.ipc)
+          throw new Error(`data.events.ipc not found`);
+        if (!data2.events.ipc[options.group])
+          throw new Error(`data.events.ipc.group not found: ${options.group}`);
+        if (!data2.events.ipc[options.group][options.event])
+          throw new Error(`data.events.ipc.group.event not found: ${options.group}.${options.event}`);
+        const res = yield data2.events.ipc[options.group][options.event](options.args);
+        return res;
+      } catch (err) {
+        console.error(`Error handling IPC event: ${err.message}`);
+        throw err;
+      }
     }));
     if (data2.events && data2.events.app && data2.events.app.onReady)
       yield data2.events.app.onReady();

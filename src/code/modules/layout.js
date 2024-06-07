@@ -9,8 +9,6 @@
 
     const fs                                = require('fs');
     const path                              = require('path');
-    const pug                               = require('pug');
-    const sass                              = require('sass');
 
 /* └────────────────────────────────────────────────────────────────────────────────────┘  */
 
@@ -20,14 +18,14 @@
 
     module.exports =
     {
-        addStyle : (targetPath, id = 'mainStyle', mode = 'window') =>
+        addStyle : async (targetPath, id = 'mainStyle', mode = 'window') =>
         {
             targetPath += '.scss';
 
             if(!fs.existsSync(targetPath)) return;
 
             // read the style.scss file
-            let cssCode = sass.compile(targetPath).css;
+            let cssCode =  await global.ipc('libs', 'sass', { targetPath });
 
             // is we have an style already ?
             if(document.getElementById(id))
@@ -36,7 +34,7 @@
                 // we will combine both files, with selectors too
                 // rules : the selectors must be unique (in all files not just the file itself)
 
-                const fetchSelectorsFromStyle = (css) =>
+                const fetchSelectorsFromStyle = async (css) =>
                 {
                     let selectors = {};
 
@@ -135,16 +133,16 @@
                     return selectors;
                 }
 
-                const makeStyle = () =>
+                const makeStyle = async () =>
                 {
                     // read the style.scss file
-                    const cssCode = sass.compile(targetPath).css;
+                    const cssCode =  await global.ipc('libs', 'sass', { targetPath });
 
                     // read the current style
                     const currentStyle = document.getElementById(id).innerHTML;
 
                     // merge
-                    let selectors = fetchSelectorsFromStyle(currentStyle + cssCode);
+                    let selectors = await fetchSelectorsFromStyle(currentStyle + cssCode);
 
                     // now we have the selectors object from the new style
                     // convert it to a string (css code)
@@ -154,7 +152,7 @@
                     for(let selector in selectors)
                     {
                         // add the selector
-                        newStyle += `${selector} {\n`;
+                        newStyle += `${selector} {`;
 
                         // loop through the selector attributes
                         for(let i = 0; i < Object.keys(selectors[selector]).length -1; i++)
@@ -163,17 +161,17 @@
                             // check
                             if(!attribute) continue;
                             // add the attribute
-                            newStyle += `    ${attribute}: ${selectors[selector][attribute]};\n`;
+                            newStyle += `${attribute}: ${selectors[selector][attribute]};`;
                         }
 
                         // close the selector
-                        newStyle += '}\n';
+                        newStyle += '\n}\n';
                     }
 
                     return newStyle;
                 }
 
-                const res = makeStyle();
+                const res = await makeStyle();
 
                 // update the style
                 document.getElementById(id).innerHTML = res;
@@ -186,41 +184,41 @@
                 const style = document.createElement('style');
                 style.innerHTML = cssCode;
                 style.setAttribute('id', id);
-                style.setAttribute('primPath', targetPath);
+                style.setAttribute('path', targetPath);
 
                 // append the window style
                 document.head.appendChild(style);
             }
         },
 
-        addLayout : (targetPath, loc) =>
+        addLayout : async (targetPath, opt = { }) =>
         {
-            if(!fs.existsSync(targetPath)) return;
+            if(!fs.existsSync(targetPath))
+                return;
+
+            if(typeof opt !== 'object')
+                opt         = { };
+
+            if(!opt.data)
+                opt.data    = { };
+
+            if(!opt.loc)
+                opt.loc     = { as: 'window' };
 
             // read the layout.pug file
-            const compiledFunction = pug.compileFile(path.join(targetPath, 'layout.pug'), { basedir: targetPath });
-
-            // Render a set of data
-            let htmlCode = compiledFunction({
-                name: 'Maysara'
-            });
+            const htmlCode = await global.ipc('libs', 'pug', { targetPath: path.join(targetPath, 'layout.pug'), options: { basedir: targetPath }, data: opt.data });
 
             // append the window layout
-            if(loc)
-            {
-                if(loc.inside)
-                {
-                    // for example inside = body
-                    // so append it to the body
-                    document.body.innerHTML += htmlCode;
-                }
-            }
+            if(opt.loc.inside)
+                document.body.innerHTML += htmlCode;
 
-            else
-            document.body.innerHTML = htmlCode;
+            else if(opt.loc.as === 'window')
+                document.body.innerHTML = htmlCode;
+
+            else throw new Error('Invalid location, Implementation needed');
 
             // add the window style
-            module.exports.addStyle(path.join(targetPath, 'style'));
+            await module.exports.addStyle(path.join(targetPath, 'style'));
         }
     }
 
